@@ -6,6 +6,8 @@
 PG_MODULE_MAGIC;
 
 PG_FUNCTION_INFO_V1(bit_count);
+PG_FUNCTION_INFO_V1(bit_count_32bit);
+PG_FUNCTION_INFO_V1(bit_count_64bit);
 
 static int hamming_weight_32bit(int val) {
     // if (val == 0) return 0;
@@ -20,6 +22,15 @@ static int hamming_weight_32bit(int val) {
 
 Datum
 bit_count(PG_FUNCTION_ARGS) {
+    // VarBit *a = PG_GETARG_VARBIT_P(0);
+
+    int count = 0;
+    // todo.
+    PG_RETURN_INT32(count);
+}
+
+Datum
+bit_count_32bit(PG_FUNCTION_ARGS) {
     VarBit *a = PG_GETARG_VARBIT_P(0);
 
     int count = 0;
@@ -52,5 +63,14 @@ bit_count(PG_FUNCTION_ARGS) {
     remainder += (int) (val >> (8 - (length % 8)));
 
     count += hamming_weight_32bit(remainder);
+    PG_RETURN_INT32(count);
+}
+
+Datum
+bit_count_64bit(PG_FUNCTION_ARGS) {
+    // VarBit *a = PG_GETARG_VARBIT_P(0);
+
+    int count = 0;
+    // todo.
     PG_RETURN_INT32(count);
 }
