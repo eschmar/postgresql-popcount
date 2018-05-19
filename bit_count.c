@@ -8,6 +8,7 @@ PG_MODULE_MAGIC;
 PG_FUNCTION_INFO_V1(bit_count);
 
 static int hamming_weight_32bit(int val) {
+    // if (val == 0) return 0;
     val = val - ((val >> 1) & 0x55555555);
     val = (val & 0x33333333) + ((val >> 2) & 0x33333333);
     val = (val + (val >> 4)) & 0x0f0f0f0f;
