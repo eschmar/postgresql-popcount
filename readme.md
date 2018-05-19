@@ -16,4 +16,5 @@ gcc -o bitcount_generator.o bitcount_generator.c
 ## todo
 * [ ] Move hamming weight to lib
 * [ ] Avoid redundant code 64bit variant
+* [ ] Improve readme
 * [ ] Bump v1

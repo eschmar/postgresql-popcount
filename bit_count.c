@@ -31,12 +31,10 @@ static const int bitcount[256] = {
  * 32bit version of the algorithm.
  **/
 static int hamming_weight_32bit(int val) {
-    // if (val == 0) return 0;
     val = val - ((val >> 1) & 0x55555555);
     val = (val & 0x33333333) + ((val >> 2) & 0x33333333);
     val = (val + (val >> 4)) & 0x0f0f0f0f;
-    val = (val * 0x01010101) >> 24;
-    return val;
+    return (val * 0x01010101) >> 24;
 }
 
 /**
@@ -45,7 +43,6 @@ static int hamming_weight_32bit(int val) {
  **/
 static int hamming_weight_64bit(uint64_t val)
 {
-    // if (val == 0) return 0;
     val -= (val >> 1) & m1;
     val = (val & m2) + ((val >> 2) & m2);
     val = (val + (val >> 4)) & m4;
