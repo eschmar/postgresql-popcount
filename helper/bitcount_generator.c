@@ -9,7 +9,7 @@ int n = 256;
  * 32bit version of the algorithm.
  **/
 static int hamming_weight_32bit(int val) {
-    val = val - ((val >> 1) & 0x55555555);
+    val -= ((val >> 1) & 0x55555555);
     val = (val & 0x33333333) + ((val >> 2) & 0x33333333);
     val = (val + (val >> 4)) & 0x0f0f0f0f;
     val = (val * 0x01010101) >> 24;
