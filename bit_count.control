@@ -1,0 +1,4 @@
+# bit_count extension
+comment = 'bit_count function for bit(n) type.'
+default_version = '0.0.1'
+relocatable = true

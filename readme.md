@@ -1,0 +1,1 @@
+# PostgreSQL bit_count function for data type bit(n).

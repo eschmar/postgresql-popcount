@@ -1,0 +1,31 @@
+CREATE EXTENSION bit_count;
+SELECT bit_count_encode(0);
+ bit_count_encode 
+------------------
+                0
+(1 row)
+
+SELECT bit_count_encode(1);
+ bit_count_encode 
+------------------
+                1
+(1 row)
+
+SELECT bit_count_encode(10);
+ bit_count_encode 
+------------------
+                2
+(1 row)
+
+SELECT bit_count_encode(35);
+ bit_count_encode 
+------------------
+                3
+(1 row)
+
+SELECT bit_count_encode(36);
+ bit_count_encode 
+------------------
+                2
+(1 row)
+
