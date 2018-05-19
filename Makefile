@@ -1,6 +1,6 @@
 EXTENSION = bit_count
 DATA = bit_count--0.0.1.sql
-REGRESS = bit_count_test
+REGRESS = bit_count_test bit_count_32bit_test
 MODULES = bit_count
 
 # postgres build stuff

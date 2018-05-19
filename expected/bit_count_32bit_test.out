@@ -1,0 +1,74 @@
+CREATE EXTENSION bit_count;
+ERROR:  extension "bit_count" already exists
+SELECT bit_count_32bit(15::bit(4));
+ bit_count_32bit 
+-----------------
+               4
+(1 row)
+
+SELECT bit_count_32bit(7::bit(4));
+ bit_count_32bit 
+-----------------
+               3
+(1 row)
+
+SELECT bit_count_32bit(15::bit(8));
+ bit_count_32bit 
+-----------------
+               4
+(1 row)
+
+SELECT bit_count_32bit(7::bit(8));
+ bit_count_32bit 
+-----------------
+               3
+(1 row)
+
+SELECT bit_count_32bit(15::bit(12));
+ bit_count_32bit 
+-----------------
+               4
+(1 row)
+
+SELECT bit_count_32bit(7::bit(12));
+ bit_count_32bit 
+-----------------
+               3
+(1 row)
+
+SELECT bit_count_32bit(15::bit(32));
+ bit_count_32bit 
+-----------------
+               4
+(1 row)
+
+SELECT bit_count_32bit(7::bit(32));
+ bit_count_32bit 
+-----------------
+               3
+(1 row)
+
+SELECT bit_count_32bit(30::bit(32));
+ bit_count_32bit 
+-----------------
+               4
+(1 row)
+
+SELECT bit_count_32bit(127::bit(32));
+ bit_count_32bit 
+-----------------
+               7
+(1 row)
+
+SELECT sum(bit_count_32bit(x::bit(512))) from generate_series(1,1000000) x;
+   sum   
+---------
+ 9884999
+(1 row)
+
+SELECT sum(bit_count_32bit(x::bit(500))) from generate_series(1,1000000) x;
+   sum   
+---------
+ 9884999
+(1 row)
+
