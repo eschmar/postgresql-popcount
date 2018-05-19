@@ -4,7 +4,6 @@
 /*
     Computes number of bits set in bit(n) data type.
 */
-
 CREATE FUNCTION bit_count(bit) RETURNS int
     AS '$libdir/bit_count', 'bit_count'
 LANGUAGE C immutable strict;
