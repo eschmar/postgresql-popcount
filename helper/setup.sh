@@ -22,6 +22,7 @@ make installcheck
 psql
 \timing
 CREATE EXTENSION bit_count;
+SELECT version();
 \q
 
 sh helper/experiment.sh
