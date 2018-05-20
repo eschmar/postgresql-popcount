@@ -79,7 +79,10 @@ bit_count_32bit(PG_FUNCTION_ARGS) {
     int length = VARBITLEN(a);
     unsigned char *byte_pointer = VARBITS(a);
     unsigned int *position = (unsigned int *) byte_pointer;
+
     unsigned char val;
+    int remainder = 0;
+    int i;
 
     while (length >= 32) {
         count += hamming_weight_32bit(*position);
@@ -91,8 +94,6 @@ bit_count_32bit(PG_FUNCTION_ARGS) {
 
     // special case, non-32bit-aligned varbit length
     byte_pointer = (unsigned char *) position;
-    int remainder = 0;
-    int i;
 
     for (i = (length / 8); i > 0; i--) {
         val = *byte_pointer;
@@ -121,7 +122,10 @@ bit_count_64bit(PG_FUNCTION_ARGS) {
     int length = VARBITLEN(a);
     unsigned char *byte_pointer = VARBITS(a);
     unsigned long *position = (unsigned long *) byte_pointer;
+
     unsigned char val;
+    long remainder = 0;
+    int i;
 
     while (length >= 64) {
         count += hamming_weight_64bit(*position);
@@ -133,8 +137,6 @@ bit_count_64bit(PG_FUNCTION_ARGS) {
 
     // special case, non-64bit-aligned varbit length
     byte_pointer = (unsigned char *) position;
-    long remainder = 0;
-    int i;
 
     for (i = (length / 8); i > 0; i--) {
         val = *byte_pointer;
