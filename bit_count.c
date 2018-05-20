@@ -30,7 +30,7 @@ static const int bitcount[256] = {
  * Hamming weight algorithm using 12 arithmetic operations.
  * 32bit version of the algorithm.
  **/
-static int hamming_weight_32bit(int val) {
+static int hamming_weight_32bit(uint32_t val) {
     val -= ((val >> 1) & 0x55555555);
     val = (val & 0x33333333) + ((val >> 2) & 0x33333333);
     val = (val + (val >> 4)) & 0x0f0f0f0f;
