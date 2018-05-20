@@ -17,11 +17,11 @@ for samples in 100 500 1000 2500 5000 7500 10000 25000 50000 75000 100000 250000
 do
     printf "$samples "
 
-    query="SELECT SUM(count) FROM (SELECT BIT_COUNT(bit) as count FROM bit_count_1000000 WHERE id < $samples) as bits;"
+    query="SET profiling = 1; SELECT SUM(count) FROM (SELECT BIT_COUNT(bit) as count FROM bit_count_1000000 WHERE id < $samples) as bits; SHOW PROFILES;"
 
     for (( i=1; i<=$trials; i++ ))
     do
-        temp=$(mysql -u root -vvv temp -e "$query" | grep "row in set" | grep -Eo '\([0-9]+([.][0-9]+)?' | sed s/\(//)
+        temp=$(mysql -u root -vvv temp -e "$query" | grep "| SELECT SUM(count)" | grep -Eo '[0-9][.][0-9]+')
 
         printf "$temp"
         if [ $i -lt $trials ]
