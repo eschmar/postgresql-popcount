@@ -52,10 +52,10 @@ do
     do
         case $units in
             'true')
-                temp=$(echo "\\\timing on \\\\\ $query" | psql | grep "Time:" | sed s/"Time: "//)
+                temp=$(echo "\\timing on \\\\ $query" | psql | grep "Time:" | sed s/"Time: "//)
                 ;;
             'false')
-                temp=$(echo "\\\timing on \\\\\ $query" | psql | grep "Time:" | grep -Eo '[0-9]+([.][0-9]+)?')
+                temp=$(echo "\\timing on \\\\ $query" | psql | grep "Time:" | grep -Eo '[0-9]+([.][0-9]+)?')
                 ;;
         esac
 
