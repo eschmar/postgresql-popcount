@@ -14,7 +14,7 @@ sh helper/experiment.sh [-s bit_count -t 10 -l 512 --units --color]
 ```
 
 option | values | comment
------------- | -------------
+--- | --- | ---
 -s | `bit_count`, `bit_count_32bit`, `bit_count_64bit` | 8bit cache lookup, 32bit hamming weight, 64bit hamming weight.
 -t | *integer* | Number of trials.
 -l | *integer* | Bit alignment length.
