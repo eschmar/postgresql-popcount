@@ -5,6 +5,7 @@ MAGENTA='\033[0;35m'
 NC='\033[0m'
 
 strategy='bit_count'
+base='bit_count'
 trials=10
 bitlength=512
 units='false'
@@ -45,7 +46,19 @@ do
             ;;
     esac
 
-    query="SELECT sum($strategy(x::bit($bitlength))) FROM generate_series(1,$samples) x;"
+    table="${base}_${samples}"
+
+    # psql -U postgres -d database_name -c 
+    psql -q -c "DROP TABLE IF EXISTS \"$table\";"
+    psql -q -c "CREATE TABLE \"public\".\"$table\" (\"id\" int4 DEFAULT nextval('bit_count_id_seq'::regclass), \"bit\" bit($samples), PRIMARY KEY (\"id\"));"
+    psql -q -c "TRUNCATE TABLE \"$table\";"
+
+    for (( i=1; i<=$samples; i++ ))
+    do
+        psql -q -c "INSERT INTO $table (bit) VALUES ($i::bit($samples));"
+    done
+
+    query="SELECT sum($strategy(x::bit($bitlength))) FROM $table WHERE True;"
     count=0
 
     for (( i=1; i<=$trials; i++ ))
