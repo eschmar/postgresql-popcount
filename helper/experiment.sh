@@ -58,7 +58,8 @@ do
         psql -q -c "INSERT INTO $table (bit) VALUES ($i::bit($samples));"
     done
 
-    query="SELECT sum($strategy(bit)) FROM $table WHERE True;"
+    query="SELECT sum(count) FROM (SELECT $strategy(bit) AS count FROM $table WHERE True) as bits;"
+    # query="SELECT sum($strategy(bit)) FROM $table WHERE True;"
     count=0
 
     for (( i=1; i<=$trials; i++ ))
