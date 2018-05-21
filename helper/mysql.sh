@@ -24,7 +24,7 @@ do
 
     table="${base}_${samples}"
 
-    mysql -u root "$database" -e "DROP TABLE \`$table\`;"
+    mysql -u root "$database" -e "DROP TABLE IF EXISTS \`$table\`;"
     mysql -u root "$database" -e "CREATE TABLE \`$table\` (\`id\` int(11) unsigned NOT NULL AUTO_INCREMENT, \`bit\` bit(64) DEFAULT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB AUTO_INCREMENT=1000001 DEFAULT CHARSET=utf8;"
     mysql -u root "$database" -e "TRUNCATE TABLE \`$table\`;"
 
