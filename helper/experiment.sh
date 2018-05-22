@@ -46,21 +46,8 @@ do
             ;;
     esac
 
-    table="${base}_${samples}"
-
-    # psql -U postgres -d database_name -c 
-    psql -q -c "DROP TABLE IF EXISTS \"$table\";"
-    psql -q -c "CREATE TABLE \"$table\" (\"id\" SERIAL, \"bit\" bit($samples), PRIMARY KEY (\"id\"));"
-    psql -q -c "TRUNCATE TABLE \"$table\";"
-
-    for (( i=1; i<=$samples; i++ ))
-    do
-        psql -q -c "INSERT INTO $table (bit) VALUES ($i::bit($samples));"
-    done
-
-    query="SELECT sum(count) FROM (SELECT $strategy(bit) AS count FROM $table WHERE True) as bits;"
-    # query="SELECT sum($strategy(bit)) FROM $table WHERE True;"
-    count=0
+    table="${base}_$(printf %07d $samples)"
+    query="SELECT sum(count) FROM (SELECT $strategy(bit) as count FROM $table WHERE True) as bits;"
 
     for (( i=1; i<=$trials; i++ ))
     do

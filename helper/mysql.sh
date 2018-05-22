@@ -22,17 +22,7 @@ for samples in 100 500 1000 2500 5000 7500 10000 25000 50000 75000 100000 250000
 do
     printf "$samples "
 
-    table="${base}_${samples}"
-
-    mysql -u root "$database" -e "DROP TABLE IF EXISTS \`$table\`;"
-    mysql -u root "$database" -e "CREATE TABLE \`$table\` (\`id\` int(11) unsigned NOT NULL AUTO_INCREMENT, \`bit\` bit(64) DEFAULT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB AUTO_INCREMENT=1000001 DEFAULT CHARSET=utf8;"
-    mysql -u root "$database" -e "TRUNCATE TABLE \`$table\`;"
-
-    for (( i=1; i<=$samples; i++ ))
-    do
-        mysql -u root "$database" -e "INSERT INTO $table VALUES (NULL, $i);"
-    done
-
+    table="${base}_$(printf %07d $samples)"
     query="SET profiling = 1; SELECT SUM(count) FROM (SELECT BIT_COUNT(bit) as count FROM $table WHERE 1) as bits; SHOW PROFILES;"
 
     for (( i=1; i<=$trials; i++ ))
