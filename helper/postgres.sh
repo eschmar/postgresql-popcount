@@ -6,17 +6,15 @@ NC='\033[0m'
 
 strategy='bit_count'
 base='bit_count'
-trials=10
-bitlength=512
+trials=50
 units='false'
 color='false'
 alignment=64
 
-while getopts 's:t:l:uc' flag; do
+while getopts 's:t:a:uc' flag; do
     case "${flag}" in
         s) strategy=$OPTARG ;;
         t) trials=$OPTARG ;;
-        l) bitlength=$OPTARG ;;
         a) alignment=$OPTARG ;;
         u) units='true' ;;
         c) color='true' ;;
@@ -27,12 +25,12 @@ done
 case $color in
     'true')
         printf "> Strategy: ${MAGENTA}$strategy${NC}\n"
-        printf "> Bit length: ${MAGENTA}$bitlength${NC}\n"
+        printf "> Bit length: ${MAGENTA}$alignment${NC}\n"
         printf "> Trials: ${MAGENTA}$trials${NC}\n\n"
         ;;
     'false')
         printf "> Strategy: $strategy\n"
-        printf "> Bit length: $bitlength\n"
+        printf "> Bit length: $alignment\n"
         printf "> Trials: $trials\n\n"
         ;;
 esac

@@ -7,13 +7,11 @@ NC='\033[0m'
 trials=50
 base="bit_count"
 database="bit_count"
-drop='true'
 
 while getopts 't:d:x' flag; do
     case "${flag}" in
         t) trials=$OPTARG ;;
         d) database=$OPTARG ;;
-        x) drop='false' ;;
         *) error "Unexpected option ${flag}" ;;
     esac
 done
@@ -35,12 +33,6 @@ do
             printf " "
         fi
     done
-
-    case $drop in
-        'true')
-            mysql -u root $database -e "DROP TABLE \`$table\`;"
-            ;;
-    esac
 
     echo
 done
