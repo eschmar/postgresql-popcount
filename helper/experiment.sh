@@ -46,7 +46,7 @@ do
             ;;
     esac
 
-    table="${base}_$(printf %07d $samples)"
+    table="${base}_${alignment}_$(printf %07d $samples)"
     query="SELECT sum(count) FROM (SELECT $strategy(bit) as count FROM $table WHERE True) as bits;"
 
     for (( i=1; i<=$trials; i++ ))

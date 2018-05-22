@@ -19,7 +19,7 @@ done
 for samples in 100 500 1000 2500 5000 7500 10000 25000 50000 75000 100000 250000 500000 750000 1000000
 do
     printf "$samples "
-    table="${base}_$(printf %07d $samples)"
+    table="${base}_${alignment}_$(printf %07d $samples)"
 
     # psql -U postgres -d database_name -c 
     psql -q -c "DROP TABLE IF EXISTS \"$table\";"
