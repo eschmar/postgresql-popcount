@@ -10,12 +10,14 @@ trials=10
 bitlength=512
 units='false'
 color='false'
+alignment=64
 
 while getopts 's:t:l:uc' flag; do
     case "${flag}" in
         s) strategy=$OPTARG ;;
         t) trials=$OPTARG ;;
         l) bitlength=$OPTARG ;;
+        a) alignment=$OPTARG ;;
         u) units='true' ;;
         c) color='true' ;;
         *) error "Unexpected option ${flag}" ;;
