@@ -14,7 +14,9 @@ static const uint64_t m2  = 0x3333333333333333; // 0b00110011...
 static const uint64_t m4  = 0x0f0f0f0f0f0f0f0f; // 0b00001111...
 static const uint64_t h01 = 0x0101010101010101; // the sum of 256 to the power of 0, 1, 2, 3...
 
-// bit count for every 8bit decimal number
+/**
+ * Bit count for every 8bit decimal number
+ **/
 static const int bitcount[256] = {
     0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
     1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5, 2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
@@ -78,11 +80,8 @@ bit_count_32bit(PG_FUNCTION_ARGS) {
     int count = 0;
     int length = VARBITLEN(a);
     unsigned char *byte_pointer = VARBITS(a);
-    unsigned int *position = (unsigned int *) byte_pointer;
-
-    unsigned char val;
-    int remainder = 0;
-    int i;
+    uint32_t *position = (uint32_t *) byte_pointer;
+    int remaining_bytes;
 
     while (length >= 32) {
         count += hamming_weight_32bit(*position);
@@ -95,17 +94,14 @@ bit_count_32bit(PG_FUNCTION_ARGS) {
     // special case, non-32bit-aligned varbit length
     byte_pointer = (unsigned char *) position;
 
-    for (i = (length / 8); i > 0; i--) {
-        val = *byte_pointer;
-        remainder += ((int) val) << (i * 8);
+    remaining_bytes = (length / 8);
+    remaining_bytes += length % 8 > 0 ? 1 : 0;
+
+    while (remaining_bytes-- > 0) {
+        count += bitcount[(int) *byte_pointer];
         byte_pointer++;
     }
 
-    // last byte may not be aligned
-    val = *byte_pointer;
-    remainder += (int) (val >> (8 - (length % 8)));
-
-    count += hamming_weight_32bit(remainder);
     PG_RETURN_INT32(count);
 }
 
@@ -122,10 +118,7 @@ bit_count_64bit(PG_FUNCTION_ARGS) {
     int length = VARBITLEN(a);
     unsigned char *byte_pointer = VARBITS(a);
     unsigned long *position = (unsigned long *) byte_pointer;
-
-    unsigned char val;
-    long remainder = 0;
-    int i;
+    int remaining_bytes;
 
     while (length >= 64) {
         count += hamming_weight_64bit(*position);
@@ -138,16 +131,13 @@ bit_count_64bit(PG_FUNCTION_ARGS) {
     // special case, non-64bit-aligned varbit length
     byte_pointer = (unsigned char *) position;
 
-    for (i = (length / 8); i > 0; i--) {
-        val = *byte_pointer;
-        remainder += ((long) val) << (i * 8);
+    remaining_bytes = (length / 8);
+    remaining_bytes += length % 8 > 0 ? 1 : 0;
+
+    while (remaining_bytes-- > 0) {
+        count += bitcount[(int) *byte_pointer];
         byte_pointer++;
     }
 
-    // last byte may not be aligned
-    val = *byte_pointer;
-    remainder += (long) (val >> (8 - (length % 8)));
-
-    count += hamming_weight_64bit(remainder);
     PG_RETURN_INT32(count);
 }
