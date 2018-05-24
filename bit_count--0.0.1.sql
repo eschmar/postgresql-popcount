@@ -12,6 +12,14 @@ CREATE FUNCTION bit_count_32bit(bit) RETURNS int
     AS '$libdir/bit_count', 'bit_count_32bit'
 LANGUAGE C immutable strict;
 
+CREATE FUNCTION bit_count_32bit_own(bit) RETURNS int
+    AS '$libdir/bit_count', 'bit_count_32bit_own'
+LANGUAGE C immutable strict;
+
+CREATE FUNCTION bit_count_32bit_lookup(bit) RETURNS int
+    AS '$libdir/bit_count', 'bit_count_32bit_lookup'
+LANGUAGE C immutable strict;
+
 CREATE FUNCTION bit_count_64bit(bit) RETURNS int
     AS '$libdir/bit_count', 'bit_count_64bit'
 LANGUAGE C immutable strict;

@@ -8,6 +8,7 @@ PG_MODULE_MAGIC;
 PG_FUNCTION_INFO_V1(bit_count);
 PG_FUNCTION_INFO_V1(bit_count_32bit);
 PG_FUNCTION_INFO_V1(bit_count_32bit_lookup);
+PG_FUNCTION_INFO_V1(bit_count_32bit_own);
 PG_FUNCTION_INFO_V1(bit_count_64bit);
 
 static const uint64_t m1  = 0x5555555555555555; // 0b0101...
@@ -94,6 +95,39 @@ bit_count_32bit(PG_FUNCTION_ARGS) {
     memcpy((void *) &remainder, (void *) position, length);
     count += hamming_weight_32bit(remainder);
 
+    PG_RETURN_INT32(count);
+}
+
+/**
+ * 32bit Hamming weight / popcount algorithm for counting bits set.
+ * Requires additional aligning logic for the last 32bit trunk.
+ * Variant not utilizing memcpy.
+ **/
+Datum
+bit_count_32bit_own(PG_FUNCTION_ARGS) {
+    VarBit *a = PG_GETARG_VARBIT_P(0);
+
+    int count = 0;
+    int length = VARBITBYTES(a);
+    unsigned char *byte_pointer = VARBITS(a);
+    uint32_t *position = (uint32_t *) byte_pointer;
+
+    for (; length >= 4; length -= 4) {
+        count += hamming_weight_32bit(*position++);
+    }
+
+    if (length == 0) PG_RETURN_INT32(count);
+
+    // special case, non-32bit-aligned varbit length
+    uint32_t remainder = 0x0;
+    unsigned char *remainder_offset = (unsigned char *) &remainder;
+    byte_pointer = (unsigned char *) position;
+
+    while (length-- > 0) {
+        *remainder_offset++ = *byte_pointer++;
+    }
+
+    count += hamming_weight_32bit(remainder);
     PG_RETURN_INT32(count);
 }
 
