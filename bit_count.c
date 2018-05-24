@@ -82,6 +82,7 @@ bit_count_32bit(PG_FUNCTION_ARGS) {
     int length = VARBITBYTES(a);
     unsigned char *byte_pointer = VARBITS(a);
     uint32_t *position = (uint32_t *) byte_pointer;
+    uint32_t remainder = 0x0;
 
     for (; length >= 4; length -= 4) {
         count += hamming_weight_32bit(*position++);
@@ -90,7 +91,6 @@ bit_count_32bit(PG_FUNCTION_ARGS) {
     if (length == 0) PG_RETURN_INT32(count);
 
     // special case, non-32bit-aligned varbit length
-    uint32_t remainder = 0x0;
     byte_pointer = (unsigned char *) position;
     memcpy((void *) &remainder, (void *) position, length);
     count += hamming_weight_32bit(remainder);
@@ -111,6 +111,8 @@ bit_count_32bit_own(PG_FUNCTION_ARGS) {
     int length = VARBITBYTES(a);
     unsigned char *byte_pointer = VARBITS(a);
     uint32_t *position = (uint32_t *) byte_pointer;
+    uint32_t remainder = 0x0;
+    unsigned char *remainder_offset;
 
     for (; length >= 4; length -= 4) {
         count += hamming_weight_32bit(*position++);
@@ -119,8 +121,7 @@ bit_count_32bit_own(PG_FUNCTION_ARGS) {
     if (length == 0) PG_RETURN_INT32(count);
 
     // special case, non-32bit-aligned varbit length
-    uint32_t remainder = 0x0;
-    unsigned char *remainder_offset = (unsigned char *) &remainder;
+    remainder_offset = (unsigned char *) &remainder;
     byte_pointer = (unsigned char *) position;
 
     while (length-- > 0) {
@@ -173,6 +174,7 @@ bit_count_64bit(PG_FUNCTION_ARGS) {
     int length = VARBITBYTES(a);
     unsigned char *byte_pointer = VARBITS(a);
     uint64_t *position = (uint64_t *) byte_pointer;
+    uint64_t remainder = 0x0;
 
     for (; length >= 8; length -= 8) {
         count += hamming_weight_64bit(*position++);
@@ -181,7 +183,6 @@ bit_count_64bit(PG_FUNCTION_ARGS) {
     if (length == 0) PG_RETURN_INT32(count);
 
     // special case, non-64bit-aligned varbit length
-    uint64_t remainder = 0x0;
     byte_pointer = (unsigned char *) position;
     memcpy((void *) &remainder, (void *) position, length);
     count += hamming_weight_64bit(remainder);
