@@ -8,7 +8,7 @@ int n = 256;
  * Hamming weight algorithm using 12 arithmetic operations.
  * 32bit version of the algorithm.
  **/
-static int hamming_weight_32bit(int val) {
+static int hamming_weight_32bit(uint32_t val) {
     val -= ((val >> 1) & 0x55555555);
     val = (val & 0x33333333) + ((val >> 2) & 0x33333333);
     val = (val + (val >> 4)) & 0x0f0f0f0f;
@@ -30,10 +30,10 @@ void init(int argc, char *argv[]) {
 
 int main(int argc, char *argv[]) {
     init(argc, argv);
-    int current = -1;
+    uint32_t current = 0x0;
 
-    while (++current < n) {
-        printf("%d, ", hamming_weight_32bit(current));
+    while (current < n) {
+        printf("%d, ", hamming_weight_32bit(current++));
     }
 
     return 0;
