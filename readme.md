@@ -10,8 +10,11 @@ make installcheck
 Make sure the extension is installed `CREATE EXTENSION bit_count;`.
 
 ```sh
-sh helper/postgres.sh [-s bit_count -t 10 -a 512 --units --color]
-sh helper/mysql.sh [-s bit_count -t 10 -d <database>]
+./helper/generate_db_postgres.sh -a 63
+./benchmark/postgres.sh [-s bit_count -t 10 -a 512 --units --color]
+
+./helper/generate_db_mysql.sh -d <database>
+./benchmark/mysql.sh [-s bit_count -t 10 -d <database>]
 ```
 
 option | values | comment
