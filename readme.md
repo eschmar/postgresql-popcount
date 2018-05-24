@@ -21,6 +21,9 @@ option | values | comment
 --units | - | Whether time units should be printed or not.
 --color | - | Colorize output.
 
+## results
+Coming soon!
+
 ## generate lookup table
 ```sh
 cd helper
@@ -29,7 +32,5 @@ gcc -o bitcount_generator.o bitcount_generator.c
 ```
 
 ## todo
-* [ ] Move hamming weight to lib
-* [ ] Avoid redundant code 64bit variant
-* [ ] Improve readme
+* [ ] Improve readme, add results
 * [ ] Bump v1
