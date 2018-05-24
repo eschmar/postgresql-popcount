@@ -30,9 +30,8 @@ Coming soon!
 
 ## generate lookup table
 ```sh
-cd helper
-gcc -o bitcount_generator.o bitcount_generator.c
-./bitcount_generator.o -n 256
+gcc -o ./helper/bitcount_generator.o ./helper/bitcount_generator.c
+./helper/bitcount_generator.o -n 256
 ```
 
 ## todo
