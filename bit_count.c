@@ -83,24 +83,18 @@ bit_count_32bit(PG_FUNCTION_ARGS) {
     unsigned char *byte_pointer = VARBITS(a);
     uint32_t *position = (uint32_t *) byte_pointer;
 
-    while (length >= 4) {
-        count += hamming_weight_32bit(*position);
-        length -= 4;
-        position++;
+    for (; length >= 4; length -= 4) {
+        count += hamming_weight_32bit(*position++);
     }
 
     if (length == 0) PG_RETURN_INT32(count);
 
     // special case, non-32bit-aligned varbit length
     uint32_t remainder = 0x0;
-    unsigned char *remainder_offset = (unsigned char *) &remainder;
-
     byte_pointer = (unsigned char *) position;
-    while (length-- > 0) {
-        *remainder_offset++ = *byte_pointer++;
-    }
-
+    memcpy((void *) &remainder, (void *) position, length);
     count += hamming_weight_32bit(remainder);
+
     PG_RETURN_INT32(count);
 }
 
@@ -148,23 +142,19 @@ bit_count_64bit(PG_FUNCTION_ARGS) {
     int count = 0;
     int length = VARBITBYTES(a);
     unsigned char *byte_pointer = VARBITS(a);
-    unsigned long *position = (unsigned long *) byte_pointer;
+    uint64_t *position = (uint64_t *) byte_pointer;
 
-    while (length >= 8) {
-        count += hamming_weight_64bit(*position);
-        length -= 8;
-        position++;
+    for (; length >= 8; length -= 8) {
+        count += hamming_weight_64bit(*position++);
     }
 
     if (length == 0) PG_RETURN_INT32(count);
 
     // special case, non-64bit-aligned varbit length
+    uint64_t remainder = 0x0;
     byte_pointer = (unsigned char *) position;
-
-    while (length-- > 0) {
-        count += bitcount[(int) *byte_pointer];
-        byte_pointer++;
-    }
+    memcpy((void *) &remainder, (void *) position, length);
+    count += hamming_weight_64bit(remainder);
 
     PG_RETURN_INT32(count);
 }
