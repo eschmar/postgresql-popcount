@@ -92,19 +92,15 @@ bit_count_32bit(PG_FUNCTION_ARGS) {
     if (length == 0) PG_RETURN_INT32(count);
 
     // special case, non-32bit-aligned varbit length
-    uint32_t *remainder = (uint32_t *) palloc(sizeof(uint32_t));
-    unsigned char *remainder_byte_pointer = (unsigned char *) remainder;
-    byte_pointer = (unsigned char *) position;
+    uint32_t remainder = 0x0;
+    unsigned char *remainder_offset = (unsigned char *) &remainder;
 
+    byte_pointer = (unsigned char *) position;
     while (length-- > 0) {
-        *remainder_byte_pointer = *byte_pointer;
-        remainder_byte_pointer++;
-        byte_pointer++;
+        *remainder_offset++ = *byte_pointer++;
     }
 
-    count += hamming_weight_32bit(*remainder);
-    pfree(remainder);
-
+    count += hamming_weight_32bit(remainder);
     PG_RETURN_INT32(count);
 }
 
