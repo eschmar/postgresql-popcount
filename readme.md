@@ -33,3 +33,8 @@ Coming soon!
 gcc -o ./helper/bitcount_generator.o ./helper/bitcount_generator.c
 ./helper/bitcount_generator.o -n 256
 ```
+## check for POPCNT hardware support
+```sh
+gcc -o ./helper/popcnt.o ./helper/popcnt.c
+./helper/popcnt.o
+```

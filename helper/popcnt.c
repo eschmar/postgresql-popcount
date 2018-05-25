@@ -29,7 +29,7 @@ int main() {
         printf(" > __builtin_popcountl: %d\n\n", __builtin_popcountll(longnumber));
 
         printf("Count of unsigned long long 0xFFFFFFFF01 is\n");
-        printf(" > __builtin_popcountl: %d\n\n", __builtin_popcountll(longlongnumber));
+        printf(" > __builtin_popcountl: %d\n", __builtin_popcountll(longlongnumber));
     } else {
         printf("Not supported.");
     }
