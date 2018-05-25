@@ -1,6 +1,6 @@
 EXTENSION = popcount
 DATA = popcount--1.0.0.sql
-REGRESS = popcount_test popcount32_test popcount64_test
+REGRESS = popcount_test popcount32_test popcount64_test popcountAsm_test
 MODULES = popcount
 
 # postgres build stuff

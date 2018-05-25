@@ -1,0 +1,74 @@
+CREATE EXTENSION popcount;
+ERROR:  extension "popcount" already exists
+SELECT popcountAsm(15::bit(4));
+ popcountasm 
+-------------
+           4
+(1 row)
+
+SELECT popcountAsm(7::bit(4));
+ popcountasm 
+-------------
+           3
+(1 row)
+
+SELECT popcountAsm(15::bit(8));
+ popcountasm 
+-------------
+           4
+(1 row)
+
+SELECT popcountAsm(7::bit(8));
+ popcountasm 
+-------------
+           3
+(1 row)
+
+SELECT popcountAsm(15::bit(12));
+ popcountasm 
+-------------
+           4
+(1 row)
+
+SELECT popcountAsm(7::bit(12));
+ popcountasm 
+-------------
+           3
+(1 row)
+
+SELECT popcountAsm(15::bit(32));
+ popcountasm 
+-------------
+           4
+(1 row)
+
+SELECT popcountAsm(7::bit(32));
+ popcountasm 
+-------------
+           3
+(1 row)
+
+SELECT popcountAsm(30::bit(32));
+ popcountasm 
+-------------
+           4
+(1 row)
+
+SELECT popcountAsm(127::bit(32));
+ popcountasm 
+-------------
+           7
+(1 row)
+
+SELECT sum(popcountAsm(x::bit(512))) from generate_series(1,1000000) x;
+   sum   
+---------
+ 9884999
+(1 row)
+
+SELECT sum(popcountAsm(x::bit(500))) from generate_series(1,1000000) x;
+   sum   
+---------
+ 9884999
+(1 row)
+

@@ -1,71 +1,71 @@
-CREATE EXTENSION bit_count;
-SELECT bit_count(15::bit(4));
- bit_count 
------------
-         4
+CREATE EXTENSION popcount;
+SELECT popcount(15::bit(4));
+ popcount 
+----------
+        4
 (1 row)
 
-SELECT bit_count(7::bit(4));
- bit_count 
------------
-         3
+SELECT popcount(7::bit(4));
+ popcount 
+----------
+        3
 (1 row)
 
-SELECT bit_count(15::bit(8));
- bit_count 
------------
-         4
+SELECT popcount(15::bit(8));
+ popcount 
+----------
+        4
 (1 row)
 
-SELECT bit_count(7::bit(8));
- bit_count 
------------
-         3
+SELECT popcount(7::bit(8));
+ popcount 
+----------
+        3
 (1 row)
 
-SELECT bit_count(15::bit(12));
- bit_count 
------------
-         4
+SELECT popcount(15::bit(12));
+ popcount 
+----------
+        4
 (1 row)
 
-SELECT bit_count(7::bit(12));
- bit_count 
------------
-         3
+SELECT popcount(7::bit(12));
+ popcount 
+----------
+        3
 (1 row)
 
-SELECT bit_count(15::bit(32));
- bit_count 
------------
-         4
+SELECT popcount(15::bit(32));
+ popcount 
+----------
+        4
 (1 row)
 
-SELECT bit_count(7::bit(32));
- bit_count 
------------
-         3
+SELECT popcount(7::bit(32));
+ popcount 
+----------
+        3
 (1 row)
 
-SELECT bit_count(30::bit(32));
- bit_count 
------------
-         4
+SELECT popcount(30::bit(32));
+ popcount 
+----------
+        4
 (1 row)
 
-SELECT bit_count(127::bit(32));
- bit_count 
------------
-         7
+SELECT popcount(127::bit(32));
+ popcount 
+----------
+        7
 (1 row)
 
-SELECT sum(bit_count(x::bit(512))) from generate_series(1,1000000) x;
+SELECT sum(popcount(x::bit(512))) from generate_series(1,1000000) x;
    sum   
 ---------
  9884999
 (1 row)
 
-SELECT sum(bit_count(x::bit(500))) from generate_series(1,1000000) x;
+SELECT sum(popcount(x::bit(500))) from generate_series(1,1000000) x;
    sum   
 ---------
  9884999

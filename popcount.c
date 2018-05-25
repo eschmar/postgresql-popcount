@@ -8,6 +8,7 @@ PG_MODULE_MAGIC;
 PG_FUNCTION_INFO_V1(popcount);
 PG_FUNCTION_INFO_V1(popcount32);
 PG_FUNCTION_INFO_V1(popcount64);
+PG_FUNCTION_INFO_V1(popcountAsm);
 
 static const uint64_t m1  = 0x5555555555555555; // 0b0101...
 static const uint64_t m2  = 0x3333333333333333; // 0b00110011...
@@ -120,6 +121,45 @@ popcount64(PG_FUNCTION_ARGS) {
     byte_pointer = (unsigned char *) position;
     memcpy((void *) &remainder, (void *) position, length);
     count += hamming_weight_64bit(remainder);
+
+    PG_RETURN_INT32(count);
+}
+
+/**
+ * POPCNT Assembly instruction.
+ * Requires hardware support or will fail.
+ **/
+Datum
+popcountAsm(PG_FUNCTION_ARGS) {
+    if (!__builtin_cpu_supports("popcnt")){
+        ereport(ERROR,
+            (
+                errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
+                errmsg("POPCNT instruction not supported."),
+                errdetail("Support is indicated by CPUID.01H:ECX.POPCNT[Bit 23] flag."),
+                errhint("Use popcount[|32|64]().")
+            )
+        );
+    }
+
+    VarBit *a = PG_GETARG_VARBIT_P(0);
+
+    int count = 0;
+    int length = VARBITBYTES(a);
+    unsigned char *byte_pointer = VARBITS(a);
+    unsigned int *position = (unsigned int *) byte_pointer;
+    unsigned int remainder = 0x0;
+
+    for (; length >= 4; length -= 4) {
+        count += __builtin_popcount((unsigned int) *position++);
+    }
+
+    if (length == 0) PG_RETURN_INT32(count);
+
+    // special case, non-32bit-aligned varbit length
+    byte_pointer = (unsigned char *) position;
+    memcpy((void *) &remainder, (void *) position, length);
+    count += __builtin_popcount(remainder);
 
     PG_RETURN_INT32(count);
 }
