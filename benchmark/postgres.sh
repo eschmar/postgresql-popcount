@@ -56,7 +56,7 @@ do
                 temp=$(echo "\\timing on \\\\ $query" | psql | grep "Time:" | sed s/"Time: "//)
                 ;;
             'false')
-                temp=$(echo "\\timing on \\\\ $query" | psql | grep "Time:" | grep -Eo '[0-9]+([.][0-9]+)?')
+                temp=$(echo "\\timing on \\\\ $query" | psql | grep "Time:" | grep -Eo -m 1 '[0-9]+([.][0-9]+)?' | head -1)
                 ;;
         esac
 
