@@ -4,7 +4,7 @@ CYAN='\033[0;36m'
 MAGENTA='\033[0;35m'
 NC='\033[0m'
 
-strategy='bit_count'
+strategy='popcount'
 base='bit_count'
 trials=50
 units='false'

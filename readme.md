@@ -1,4 +1,4 @@
-# PostgreSQL bit_count function for data type bit(n).
+# PostgreSQL popcount function for data type bit(n).
 Requires `pg_config` installed.
 
 ```sh
@@ -7,19 +7,19 @@ make installcheck
 ```
 
 ## benchmarks
-Make sure the extension is installed `CREATE EXTENSION bit_count;`.
+Make sure the extension is installed `CREATE EXTENSION popcount;`.
 
 ```sh
 ./helper/generate_db_postgres.sh -a 512
-./benchmark/postgres.sh [-s bit_count -t 10 -a 512 --units --color]
+./benchmark/postgres.sh [-s popcount -t 10 -a 512 --units --color]
 
 ./helper/generate_db_mysql.sh -d <database>
-./benchmark/mysql.sh [-s bit_count -t 10 -d <database>]
+./benchmark/mysql.sh [-s popcount -t 10 -d <database>]
 ```
 
 option | values | comment
 --- | --- | ---
--s | `bit_count`, `bit_count_32bit`, `bit_count_64bit` | 8bit cache lookup, 32bit hamming weight, 64bit hamming weight.
+-s | `popcount`, `popcount32`, `popcount64` | 8bit lookup table, 32bit hamming weight, 64bit hamming weight.
 -t | *integer* | Number of trials.
 -a | *integer* | Bit alignment length.
 --units | - | Whether time units should be printed or not.

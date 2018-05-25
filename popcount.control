@@ -1,0 +1,4 @@
+# popcount extension
+comment = 'popcount function for bit(n).'
+default_version = '1.0.0'
+relocatable = true
