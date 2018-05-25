@@ -19,7 +19,7 @@ Make sure the extension is installed `CREATE EXTENSION popcount;`.
 
 option | values | comment
 --- | --- | ---
--s | `popcount`, `popcount32`, `popcount64` | 8bit lookup table, 32bit hamming weight, 64bit hamming weight.
+-s | `popcount`, `popcount32`, `popcount64`, `popcountAsm` | 8bit lookup table, 32bit hamming weight, 64bit hamming weight, Assembly `POPCNT` instruction.
 -t | *integer* | Number of trials.
 -a | *integer* | Bit alignment length.
 --units | - | Whether time units should be printed or not.
@@ -33,7 +33,3 @@ Coming soon!
 gcc -o ./helper/bitcount_generator.o ./helper/bitcount_generator.c
 ./helper/bitcount_generator.o -n 256
 ```
-
-## todo
-* [ ] Improve readme, add results
-* [ ] Bump v1
