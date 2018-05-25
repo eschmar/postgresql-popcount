@@ -144,14 +144,15 @@ popcountAsm(PG_FUNCTION_ARGS) {
 
     VarBit *a = PG_GETARG_VARBIT_P(0);
 
-    int count = 0;
+    int count = 0, temp;
     int length = VARBITBYTES(a);
     unsigned char *byte_pointer = VARBITS(a);
     unsigned int *position = (unsigned int *) byte_pointer;
     unsigned int remainder = 0x0;
 
     for (; length >= 4; length -= 4) {
-        count += __builtin_popcount((unsigned int) *position++);
+        asm("popcnt %1,%0" : "=r"(temp) : "rm"((unsigned int) *position++) : "cc");
+        count += temp;
     }
 
     if (length == 0) PG_RETURN_INT32(count);
@@ -159,7 +160,8 @@ popcountAsm(PG_FUNCTION_ARGS) {
     // special case, non-32bit-aligned varbit length
     byte_pointer = (unsigned char *) position;
     memcpy((void *) &remainder, (void *) position, length);
-    count += __builtin_popcount(remainder);
+    asm("popcnt %1,%0" : "=r"(temp) : "rm"(remainder) : "cc");
+    count += temp;
 
     PG_RETURN_INT32(count);
 }
