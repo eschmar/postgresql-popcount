@@ -131,6 +131,14 @@ popcount64(PG_FUNCTION_ARGS) {
  **/
 Datum
 popcountAsm(PG_FUNCTION_ARGS) {
+    VarBit *a = PG_GETARG_VARBIT_P(0);
+
+    int count = 0, temp;
+    int length = VARBITBYTES(a);
+    unsigned char *byte_pointer = VARBITS(a);
+    unsigned int *position = (unsigned int *) byte_pointer;
+    unsigned int remainder = 0x0;
+
     if (!__builtin_cpu_supports("popcnt")){
         ereport(ERROR,
             (
@@ -141,14 +149,6 @@ popcountAsm(PG_FUNCTION_ARGS) {
             )
         );
     }
-
-    VarBit *a = PG_GETARG_VARBIT_P(0);
-
-    int count = 0, temp;
-    int length = VARBITBYTES(a);
-    unsigned char *byte_pointer = VARBITS(a);
-    unsigned int *position = (unsigned int *) byte_pointer;
-    unsigned int remainder = 0x0;
 
     for (; length >= 4; length -= 4) {
         asm("popcnt %1,%0" : "=r"(temp) : "rm"((unsigned int) *position++) : "cc");
