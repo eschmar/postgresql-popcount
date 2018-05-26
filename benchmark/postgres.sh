@@ -11,11 +11,14 @@ units='false'
 color='false'
 alignment=64
 
-while getopts 's:t:a:uc' flag; do
+samples="100 500 1000 2500 5000 7500 10000 25000 50000 75000 100000 250000 500000 750000 1000000"
+
+while getopts 's:t:a:x:uc' flag; do
     case "${flag}" in
         s) strategy=$OPTARG ;;
         t) trials=$OPTARG ;;
         a) alignment=$OPTARG ;;
+        x) samples=$OPTARG ;;
         u) units='true' ;;
         c) color='true' ;;
         *) error "Unexpected option ${flag}" ;;
@@ -35,18 +38,20 @@ case $color in
         ;;
 esac
 
-for samples in 100 500 1000 2500 5000 7500 10000 25000 50000 75000 100000 250000 500000 750000 1000000
+read -a arr <<< "$samples"
+
+for sample in "${arr[@]}"
 do
     case $color in
         'true')
-            printf "${CYAN}$samples${NC} "
+            printf "${CYAN}$sample${NC} "
             ;;
         'false')
-            printf "$samples "
+            printf "$sample "
             ;;
     esac
 
-    table="${base}_${alignment}_$(printf %07d $samples)"
+    table="${base}_${alignment}_$(printf %07d $sample)"
     query="SELECT sum(count) FROM (SELECT $strategy(bit) as count FROM $table WHERE True) as bits;"
 
     for (( i=1; i<=$trials; i++ ))
