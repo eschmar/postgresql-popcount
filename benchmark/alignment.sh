@@ -35,7 +35,7 @@ case $color in
         ;;
 esac
 
-for alignments in 2048 4096 8192 16384 32768 65536 131072 524287
+for alignments in 2048 4096 8192 14016 15040 15680 16000 16352 16384 32768 65536 131072 524287
 do
     case $color in
         'true')
