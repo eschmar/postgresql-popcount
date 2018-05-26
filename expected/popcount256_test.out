@@ -1,0 +1,146 @@
+CREATE EXTENSION popcount;
+ERROR:  extension "popcount" already exists
+SELECT popcount256(15::bit(4));
+ popcount256 
+-------------
+           4
+(1 row)
+
+SELECT popcount256(7::bit(4));
+ popcount256 
+-------------
+           3
+(1 row)
+
+SELECT popcount256(15::bit(8));
+ popcount256 
+-------------
+           4
+(1 row)
+
+SELECT popcount256(7::bit(8));
+ popcount256 
+-------------
+           3
+(1 row)
+
+SELECT popcount256(15::bit(12));
+ popcount256 
+-------------
+           4
+(1 row)
+
+SELECT popcount256(7::bit(12));
+ popcount256 
+-------------
+           3
+(1 row)
+
+SELECT popcount256(15::bit(32));
+ popcount256 
+-------------
+           4
+(1 row)
+
+SELECT popcount256(7::bit(32));
+ popcount256 
+-------------
+           3
+(1 row)
+
+SELECT popcount256(30::bit(32));
+ popcount256 
+-------------
+           4
+(1 row)
+
+SELECT popcount256(127::bit(32));
+ popcount256 
+-------------
+           7
+(1 row)
+
+SELECT popcount256(15::bit(256));
+ popcount256 
+-------------
+           4
+(1 row)
+
+SELECT popcount256(7::bit(256));
+ popcount256 
+-------------
+           3
+(1 row)
+
+SELECT popcount256(15::bit(512));
+ popcount256 
+-------------
+           4
+(1 row)
+
+SELECT popcount256(7::bit(512));
+ popcount256 
+-------------
+           3
+(1 row)
+
+SELECT popcount256(15::bit(8192));
+ popcount256 
+-------------
+           4
+(1 row)
+
+SELECT popcount256(7::bit(8192));
+ popcount256 
+-------------
+           3
+(1 row)
+
+SELECT popcount256(15::bit(1234));
+ popcount256 
+-------------
+           4
+(1 row)
+
+SELECT popcount256(7::bit(1234));
+ popcount256 
+-------------
+           3
+(1 row)
+
+SELECT popcount256(15::bit(3000));
+ popcount256 
+-------------
+           4
+(1 row)
+
+SELECT popcount256(7::bit(3000));
+ popcount256 
+-------------
+           3
+(1 row)
+
+SELECT popcount256(15::bit(8192));
+ popcount256 
+-------------
+           4
+(1 row)
+
+SELECT popcount256(7::bit(8192));
+ popcount256 
+-------------
+           3
+(1 row)
+
+SELECT sum(popcount256(x::bit(8192))) from generate_series(1,1000000) x;
+   sum   
+---------
+ 9884999
+(1 row)
+
+SELECT sum(popcount256(x::bit(8192))) from generate_series(1,1000000) x;
+   sum   
+---------
+ 9884999
+(1 row)
+

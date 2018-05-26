@@ -9,6 +9,7 @@ PG_FUNCTION_INFO_V1(popcount);
 PG_FUNCTION_INFO_V1(popcount32);
 PG_FUNCTION_INFO_V1(popcount64);
 PG_FUNCTION_INFO_V1(popcountAsm);
+PG_FUNCTION_INFO_V1(popcount256);
 
 static const uint64_t m1  = 0x5555555555555555; // 0b0101...
 static const uint64_t m2  = 0x3333333333333333; // 0b00110011...
@@ -162,6 +163,69 @@ popcountAsm(PG_FUNCTION_ARGS) {
     memcpy((void *) &remainder, (void *) position, length);
     asm("popcnt %1,%0" : "=r"(temp) : "rm"(remainder) : "cc");
     count += temp;
+
+    PG_RETURN_INT32(count);
+}
+
+/**
+ * Unrolled POPCNT Assembly instruction for 256bit steps.
+ * Requires hardware support or will fail.
+ * Falls back to 64 bit Hamming Weight and memcpy for remainder alignment.
+ **/
+Datum
+popcount256(PG_FUNCTION_ARGS) {
+    VarBit *a = PG_GETARG_VARBIT_P(0);
+
+    int i, count = 0;
+    uint64_t counts[4];
+    int length = VARBITBYTES(a);
+    unsigned char *byte_pointer = VARBITS(a);
+    uint64_t *buffer = (uint64_t *) byte_pointer;
+    uint64_t remainder = 0x0;
+
+    if (!__builtin_cpu_supports("popcnt")){
+        ereport(ERROR,
+            (
+                errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
+                errmsg("POPCNT instruction not supported."),
+                errdetail("Support is indicated by CPUID.01H:ECX.POPCNT[Bit 23] flag."),
+                errhint("Use popcount[|32|64]().")
+            )
+        );
+    }
+
+    for (i = 0; i < 4; i++) counts[i] = 0;
+
+    // Unrolled 64bit POPCNT
+    for (; length >= 32; length -= 32) {
+        __asm__(
+            "popcnt %4, %4 \n\t add %4, %0 \n\t"
+            "popcnt %5, %5 \n\t add %5, %1 \n\t"
+            "popcnt %6, %6 \n\t add %6, %2 \n\t"
+            "popcnt %7, %7 \n\t add %7, %3 \n\t"
+            // input/output
+            : "+r" (counts[0]), "+r" (counts[1]), "+r" (counts[2]), "+r" (counts[3])
+            // inputs
+            : "r"  (buffer[0]), "r"  (buffer[1]), "r"  (buffer[2]), "r"  (buffer[3])
+            // clobber indicates that the flags register is modified
+            : "cc"
+        );
+
+        count += counts[0] + counts[1] + counts[2] + counts[3];
+        buffer += 4;
+    }
+
+    // fall back to 64bit hamming weight
+    for (; length >= 8; length -= 8) {
+        count += hamming_weight_64bit(*buffer++);
+    }
+
+    if (length == 0) PG_RETURN_INT32(count);
+
+    // special case, non-64bit-aligned varbit length
+    byte_pointer = (unsigned char *) buffer;
+    memcpy((void *) &remainder, (void *) buffer, length);
+    count += hamming_weight_64bit(remainder);
 
     PG_RETURN_INT32(count);
 }

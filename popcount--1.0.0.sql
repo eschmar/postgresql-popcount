@@ -19,3 +19,7 @@ LANGUAGE C immutable strict;
 CREATE FUNCTION popcountAsm(bit) RETURNS int
     AS '$libdir/popcount', 'popcountAsm'
 LANGUAGE C immutable strict;
+
+CREATE FUNCTION popcount256(bit) RETURNS int
+    AS '$libdir/popcount', 'popcount256'
+LANGUAGE C immutable strict;
