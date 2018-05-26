@@ -168,6 +168,7 @@ popcountAsm(PG_FUNCTION_ARGS) {
 }
 
 /**
+ * ATTENTION - Does not work properly yet!
  * Unrolled POPCNT Assembly instruction for 256bit steps.
  * Requires hardware support or will fail.
  * Falls back to 64 bit Hamming Weight and memcpy for remainder alignment.
