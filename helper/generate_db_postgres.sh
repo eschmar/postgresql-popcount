@@ -7,19 +7,23 @@ NC='\033[0m'
 base="bit_count"
 database="bit_count"
 alignment=64
+samples="100 500 1000 2500 5000 7500 10000 25000 50000 75000 100000 250000 500000 750000 1000000"
 
-while getopts 'd:a:' flag; do
+while getopts 'd:a:s:' flag; do
     case "${flag}" in
         d) database=$OPTARG ;;
         a) alignment=$OPTARG ;;
+        s) samples=$OPTARG ;;
         *) error "Unexpected option ${flag}" ;;
     esac
 done
 
-for samples in 100 500 1000 2500 5000 7500 10000 25000 50000 75000 100000 250000 500000 750000 1000000
+read -a arr <<< "$samples"
+
+for sample in "${arr[@]}"
 do
-    printf "$samples "
-    table="${base}_${alignment}_$(printf %07d $samples)"
+    printf "$sample "
+    table="${base}_${alignment}_$(printf %07d $sample)"
 
     # psql -U postgres -d database_name -c 
     psql -q -c "DROP TABLE IF EXISTS \"$table\";"
@@ -27,7 +31,7 @@ do
     psql -q -c "TRUNCATE TABLE \"$table\";"
 
     values=''
-    for (( j=0; j<($samples/100); j++))
+    for (( j=0; j<($sample/100); j++))
     do
         values=''
         for (( i=1; i<=100; i++ ))
