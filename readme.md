@@ -30,11 +30,12 @@ Coming soon!
 
 ## generate lookup table
 ```sh
-gcc -o ./helper/bitcount_generator.o ./helper/bitcount_generator.c
-./helper/bitcount_generator.o -n 256
+gcc -o ./helper/lookup_table_generator.o ./helper/lookup_table_generator.c
+./helper/lookup_table_generator.o -n 256
 ```
+
 ## check for POPCNT hardware support
 ```sh
-gcc -o ./helper/popcnt.o ./helper/popcnt.c
-./helper/popcnt.o
+gcc -o ./helper/popcnt_support.o ./helper/popcnt_support.c
+./helper/popcnt_support.o
 ```
