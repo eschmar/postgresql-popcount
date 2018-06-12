@@ -26,7 +26,7 @@ option | values | comment
 --color | - | Colorize output.
 
 ## results
-Coming soon!
+<img src="https://github.com/eschmar/postgresql-popcount/raw/master/img/graph.png" alt="Benchmarks" style="max-width:100%;">
 
 ## generate lookup table
 ```sh
