@@ -8,6 +8,8 @@ PG_MODULE_MAGIC;
 PG_FUNCTION_INFO_V1(popcount);
 PG_FUNCTION_INFO_V1(popcount32);
 PG_FUNCTION_INFO_V1(popcount64);
+PG_FUNCTION_INFO_V1(popcountIntr);
+PG_FUNCTION_INFO_V1(popcountIntrL);
 PG_FUNCTION_INFO_V1(popcountAsm);
 PG_FUNCTION_INFO_V1(popcount256);
 
@@ -122,6 +124,62 @@ popcount64(PG_FUNCTION_ARGS) {
     byte_pointer = (unsigned char *) position;
     memcpy((void *) &remainder, (void *) position, length);
     count += hamming_weight_64bit(remainder);
+
+    PG_RETURN_INT32(count);
+}
+
+/**
+ * 32bit Hamming weight / popcount algorithm for counting bits set.
+ * Requires additional aligning logic for the last 32bit trunk.
+ **/
+Datum
+popcountIntr(PG_FUNCTION_ARGS) {
+    VarBit *a = PG_GETARG_VARBIT_P(0);
+
+    int count = 0;
+    int length = VARBITBYTES(a);
+    unsigned char *byte_pointer = VARBITS(a);
+    unsigned int *position = (unsigned int *) byte_pointer;
+    unsigned int remainder = 0x0;
+
+    for (; length >= 4; length -= 4) {
+        count += __builtin_popcount(*position++);
+    }
+
+    if (length == 0) PG_RETURN_INT32(count);
+
+    // special case, non-32bit-aligned varbit length
+    byte_pointer = (unsigned char *) position;
+    memcpy((void *) &remainder, (void *) position, length);
+    count += __builtin_popcount(remainder);
+
+    PG_RETURN_INT32(count);
+}
+
+/**
+ * 64bit Hamming weight / popcount algorithm for counting bits set.
+ * Requires additional aligning logic for the last 64bit trunk.
+ **/
+Datum
+popcountIntrL(PG_FUNCTION_ARGS) {
+    VarBit *a = PG_GETARG_VARBIT_P(0);
+
+    int count = 0;
+    int length = VARBITBYTES(a);
+    unsigned char *byte_pointer = VARBITS(a);
+    unsigned long *position = (unsigned long *) byte_pointer;
+    unsigned long remainder = 0x0;
+
+    for (; length >= 8; length -= 8) {
+        count += __builtin_popcountl(*position++);
+    }
+
+    if (length == 0) PG_RETURN_INT32(count);
+
+    // special case, non-64bit-aligned varbit length
+    byte_pointer = (unsigned char *) position;
+    memcpy((void *) &remainder, (void *) position, length);
+    count += __builtin_popcountl(remainder);
 
     PG_RETURN_INT32(count);
 }
