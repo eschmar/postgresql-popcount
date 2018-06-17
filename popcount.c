@@ -8,9 +8,8 @@ PG_MODULE_MAGIC;
 PG_FUNCTION_INFO_V1(popcount);
 PG_FUNCTION_INFO_V1(popcount32);
 PG_FUNCTION_INFO_V1(popcount64);
-PG_FUNCTION_INFO_V1(popcountIntr);
-PG_FUNCTION_INFO_V1(popcountIntrL);
 PG_FUNCTION_INFO_V1(popcountAsm);
+PG_FUNCTION_INFO_V1(popcountAsm64);
 PG_FUNCTION_INFO_V1(popcount256);
 
 static const uint64_t m1  = 0x5555555555555555; // 0b0101...
@@ -133,7 +132,7 @@ popcount64(PG_FUNCTION_ARGS) {
  * Requires additional aligning logic for the last 32bit trunk.
  **/
 Datum
-popcountIntr(PG_FUNCTION_ARGS) {
+popcountAsm(PG_FUNCTION_ARGS) {
     VarBit *a = PG_GETARG_VARBIT_P(0);
 
     int count = 0;
@@ -161,7 +160,7 @@ popcountIntr(PG_FUNCTION_ARGS) {
  * Requires additional aligning logic for the last 64bit trunk.
  **/
 Datum
-popcountIntrL(PG_FUNCTION_ARGS) {
+popcountAsm64(PG_FUNCTION_ARGS) {
     VarBit *a = PG_GETARG_VARBIT_P(0);
 
     int count = 0;
@@ -185,61 +184,22 @@ popcountIntrL(PG_FUNCTION_ARGS) {
 }
 
 /**
- * POPCNT Assembly instruction.
- * Requires hardware support or will fail.
+ * Inline assembly popcntq instruction.
  **/
-Datum
-popcountAsm(PG_FUNCTION_ARGS) {
-    VarBit *a = PG_GETARG_VARBIT_P(0);
-
-    int count = 0, temp;
-    int length = VARBITBYTES(a);
-    unsigned char *byte_pointer = VARBITS(a);
-    unsigned int *position = (unsigned int *) byte_pointer;
-    unsigned int remainder = 0x0;
-
-    if (!__builtin_cpu_supports("popcnt")){
-        ereport(ERROR,
-            (
-                errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-                errmsg("POPCNT instruction not supported."),
-                errdetail("Support is indicated by CPUID.01H:ECX.POPCNT[Bit 23] flag."),
-                errhint("Use popcount[|32|64]().")
-            )
-        );
-    }
-
-    for (; length >= 4; length -= 4) {
-        asm("popcnt %1,%0" : "=r"(temp) : "rm"((unsigned int) *position++) : "cc");
-        count += temp;
-    }
-
-    if (length == 0) PG_RETURN_INT32(count);
-
-    // special case, non-32bit-aligned varbit length
-    byte_pointer = (unsigned char *) position;
-    memcpy((void *) &remainder, (void *) position, length);
-    asm("popcnt %1,%0" : "=r"(temp) : "rm"(remainder) : "cc");
-    count += temp;
-
-    PG_RETURN_INT32(count);
-}
-
 static inline uint64_t popcntq(uint64_t val) {
     __asm__ ("popcnt %1, %0" : "=r" (val) : "0" (val));
     return val;
 }
 
 /**
- * ATTENTION - Does not work properly yet!
  * Unrolled POPCNT Assembly instruction for 256bit steps.
  * Requires hardware support or will fail.
- * Falls back to 64 bit Hamming Weight and memcpy for remainder alignment.
+ * Uses memcpy for remainder alignment.
  **/
 Datum
 popcount256(PG_FUNCTION_ARGS) {
     VarBit *a = PG_GETARG_VARBIT_P(0);
-    uint64_t limit, align, i = 0, count = 0;
+    uint64_t limit, chunks, i = 0, count = 0;
     int length = VARBITBYTES(a);
     unsigned char *byte_pointer = VARBITS(a);
     uint64_t *buffer = (uint64_t *) byte_pointer;
@@ -256,8 +216,8 @@ popcount256(PG_FUNCTION_ARGS) {
         );
     }
 
-    align = length / 8;
-    limit = align - align % 4;
+    chunks = length / 8;
+    limit = chunks - (chunks % 4);
 
     // unrolled popcntq
     for (; i < limit; i += 4) {
@@ -268,17 +228,16 @@ popcount256(PG_FUNCTION_ARGS) {
     }
 
     // remaining popcntq
-    for (; i < align; i++) {
+    for (; i < chunks; i++) {
         count += popcntq(buffer[i]);
     }
 
-    length = length % 8;
-    if (length == 0) PG_RETURN_INT32(count);
+    if (length % 8 == 0) PG_RETURN_INT32(count);
 
     // special case, non-64bit-aligned varbit length
-    buffer += align;
+    buffer += chunks;
     byte_pointer = (unsigned char *) buffer;
-    memcpy((void *) &remainder, (void *) buffer, length);
+    memcpy((void *) &remainder, (void *) buffer, length % 8);
     count += popcntq(remainder);
 
     PG_RETURN_INT32(count);
