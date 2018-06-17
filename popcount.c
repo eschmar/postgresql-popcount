@@ -192,27 +192,6 @@ static inline uint64_t popcntq(uint64_t val) {
 }
 
 /**
- * Unrolled popcntq version to avoid False Data Dependency.
- */
-static inline uint64_t popcntqUnrolled(const uint64_t* buffer, uint64_t length) {
-    uint64_t i = 0, count = 0;
-    uint64_t limit = length - (length % 4);
-
-    for (; i < limit; i += 4) {
-        count += popcntq(buffer[i]);
-        count += popcntq(buffer[i+1]);
-        count += popcntq(buffer[i+2]);
-        count += popcntq(buffer[i+3]);
-    }
-
-    for (; i < length; i++) {
-        count += popcntq(buffer[i]);
-    }
-
-    return count;
-}
-
-/**
  * Unrolled POPCNT Assembly instruction for 256bit steps.
  * Requires hardware support or will fail.
  * Uses memcpy for remainder alignment.
@@ -220,8 +199,9 @@ static inline uint64_t popcntqUnrolled(const uint64_t* buffer, uint64_t length) 
 Datum
 popcount256(PG_FUNCTION_ARGS) {
     VarBit *a = PG_GETARG_VARBIT_P(0);
-    uint64_t chunks, count = 0;
     int length = VARBITBYTES(a);
+
+    uint64_t chunks, limit, count = 0, i = 0;
     unsigned char *byte_pointer = VARBITS(a);
     uint64_t *buffer = (uint64_t *) byte_pointer;
     uint64_t remainder = 0x0;
@@ -238,7 +218,20 @@ popcount256(PG_FUNCTION_ARGS) {
     }
 
     chunks = length / 8;
-    count = popcntqUnrolled(buffer, chunks);
+    limit = chunks - (chunks % 4);
+
+    // Unrolled popcntq to avoid False Data Dependency.
+    for (; i < limit; i += 4) {
+        count += popcntq(buffer[i]);
+        count += popcntq(buffer[i+1]);
+        count += popcntq(buffer[i+2]);
+        count += popcntq(buffer[i+3]);
+    }
+
+    // Regular popcntq for remaining 64 bit chunks.
+    for (; i < chunks; i++) {
+        count += popcntq(buffer[i]);
+    }
 
     if (length % 8 == 0) PG_RETURN_INT32(count);
 
