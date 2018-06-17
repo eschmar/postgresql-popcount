@@ -1,0 +1,158 @@
+CREATE EXTENSION popcount;
+ERROR:  extension "popcount" already exists
+SELECT popcountIntr(15::bit(4));
+ popcountintr 
+--------------
+            4
+(1 row)
+
+SELECT popcountIntr(7::bit(4));
+ popcountintr 
+--------------
+            3
+(1 row)
+
+SELECT popcountIntr(15::bit(8));
+ popcountintr 
+--------------
+            4
+(1 row)
+
+SELECT popcountIntr(7::bit(8));
+ popcountintr 
+--------------
+            3
+(1 row)
+
+SELECT popcountIntr(15::bit(12));
+ popcountintr 
+--------------
+            4
+(1 row)
+
+SELECT popcountIntr(7::bit(12));
+ popcountintr 
+--------------
+            3
+(1 row)
+
+SELECT popcountIntr(15::bit(32));
+ popcountintr 
+--------------
+            4
+(1 row)
+
+SELECT popcountIntr(7::bit(32));
+ popcountintr 
+--------------
+            3
+(1 row)
+
+SELECT popcountIntr(30::bit(32));
+ popcountintr 
+--------------
+            4
+(1 row)
+
+SELECT popcountIntr(127::bit(32));
+ popcountintr 
+--------------
+            7
+(1 row)
+
+SELECT popcountIntr(b'10101010101010101010101010101010101101010101010101010101010101010101011010101010101010101010101010101010110101010101010101010101010101010101101010101010101010101010101010101011010101010101010101010101010101010110101010101010101010101010101010101101010101010101010101010101010101011010101010101010101010101010101010110101010101010101010101010101010101101010101010101010101010101010101011010101010101010101010101010101010110101010101010101010101010101010101101010101010101010101010101010101011010101010101010101010');
+ popcountintr 
+--------------
+          263
+(1 row)
+
+SELECT sum(popcountIntr(x::bit(512))) from generate_series(1,1000000) x;
+   sum   
+---------
+ 9884999
+(1 row)
+
+SELECT sum(popcountIntr(x::bit(500))) from generate_series(1,1000000) x;
+   sum   
+---------
+ 9884999
+(1 row)
+
+SELECT popcountIntrL(15::bit(4));
+ popcountintrl 
+---------------
+             4
+(1 row)
+
+SELECT popcountIntrL(7::bit(4));
+ popcountintrl 
+---------------
+             3
+(1 row)
+
+SELECT popcountIntrL(15::bit(8));
+ popcountintrl 
+---------------
+             4
+(1 row)
+
+SELECT popcountIntrL(7::bit(8));
+ popcountintrl 
+---------------
+             3
+(1 row)
+
+SELECT popcountIntrL(15::bit(12));
+ popcountintrl 
+---------------
+             4
+(1 row)
+
+SELECT popcountIntrL(7::bit(12));
+ popcountintrl 
+---------------
+             3
+(1 row)
+
+SELECT popcountIntrL(15::bit(32));
+ popcountintrl 
+---------------
+             4
+(1 row)
+
+SELECT popcountIntrL(7::bit(32));
+ popcountintrl 
+---------------
+             3
+(1 row)
+
+SELECT popcountIntrL(30::bit(32));
+ popcountintrl 
+---------------
+             4
+(1 row)
+
+SELECT popcountIntrL(127::bit(32));
+ popcountintrl 
+---------------
+             7
+(1 row)
+
+SELECT popcountIntrL(b'10101010101010101010101010101010101101010101010101010101010101010101011010101010101010101010101010101010110101010101010101010101010101010101101010101010101010101010101010101011010101010101010101010101010101010110101010101010101010101010101010101101010101010101010101010101010101011010101010101010101010101010101010110101010101010101010101010101010101101010101010101010101010101010101011010101010101010101010101010101010110101010101010101010101010101010101101010101010101010101010101010101011010101010101010101010');
+ popcountintrl 
+---------------
+           263
+(1 row)
+
+SELECT sum(popcountIntrL(x::bit(512))) from generate_series(1,1000000) x;
+   sum   
+---------
+ 9884999
+(1 row)
+
+SELECT sum(popcountIntrL(x::bit(500))) from generate_series(1,1000000) x;
+   sum   
+---------
+ 9884999
+(1 row)
+

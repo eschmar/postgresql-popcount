@@ -64,5 +64,6 @@ dkms.conf
 /regression.diffs
 /regression.out
 
+/intrinsic/build
 /temp
 /misc

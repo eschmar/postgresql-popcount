@@ -225,6 +225,11 @@ popcountAsm(PG_FUNCTION_ARGS) {
     PG_RETURN_INT32(count);
 }
 
+static inline uint64_t popcntq(uint64_t val) {
+    __asm__ ("popcnt %1, %0" : "=r" (val) : "0" (val));
+    return val;
+}
+
 /**
  * ATTENTION - Does not work properly yet!
  * Unrolled POPCNT Assembly instruction for 256bit steps.
@@ -234,9 +239,7 @@ popcountAsm(PG_FUNCTION_ARGS) {
 Datum
 popcount256(PG_FUNCTION_ARGS) {
     VarBit *a = PG_GETARG_VARBIT_P(0);
-
-    int i, count = 0;
-    uint64_t counts[4];
+    uint64_t limit, align, i = 0, count = 0;
     int length = VARBITBYTES(a);
     unsigned char *byte_pointer = VARBITS(a);
     uint64_t *buffer = (uint64_t *) byte_pointer;
@@ -253,38 +256,30 @@ popcount256(PG_FUNCTION_ARGS) {
         );
     }
 
-    for (i = 0; i < 4; i++) counts[i] = 0;
+    align = length / 8;
+    limit = align - align % 4;
 
-    // Unrolled 64bit POPCNT
-    for (; length >= 32; length -= 32) {
-        __asm__(
-            "popcnt %4, %4 \n\t add %4, %0 \n\t"
-            "popcnt %5, %5 \n\t add %5, %1 \n\t"
-            "popcnt %6, %6 \n\t add %6, %2 \n\t"
-            "popcnt %7, %7 \n\t add %7, %3 \n\t"
-            // input/output
-            : "+r" (counts[0]), "+r" (counts[1]), "+r" (counts[2]), "+r" (counts[3])
-            // inputs
-            : "r"  (buffer[0]), "r"  (buffer[1]), "r"  (buffer[2]), "r"  (buffer[3])
-            // clobber indicates that the flags register is modified
-            : "cc"
-        );
-
-        count += counts[0] + counts[1] + counts[2] + counts[3];
-        buffer += 4;
+    // unrolled popcntq
+    for (; i < limit; i += 4) {
+        count += popcntq(buffer[i+0]);
+        count += popcntq(buffer[i+1]);
+        count += popcntq(buffer[i+2]);
+        count += popcntq(buffer[i+3]);
     }
 
-    // fall back to 64bit hamming weight
-    for (; length >= 8; length -= 8) {
-        count += hamming_weight_64bit(*buffer++);
+    // remaining popcntq
+    for (; i < align; i++) {
+        count += popcntq(buffer[i]);
     }
 
+    length = length % 8;
     if (length == 0) PG_RETURN_INT32(count);
 
     // special case, non-64bit-aligned varbit length
+    buffer += align;
     byte_pointer = (unsigned char *) buffer;
     memcpy((void *) &remainder, (void *) buffer, length);
-    count += hamming_weight_64bit(remainder);
+    count += popcntq(remainder);
 
     PG_RETURN_INT32(count);
 }
