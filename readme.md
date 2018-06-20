@@ -1,4 +1,7 @@
 # PostgreSQL popcount function for data type bit(n).
+Provides `popcount`, `popcount32`, `popcount64`, `popcountAsm`, `popcountAsm64` and `popcount256` functions to PostgreSQL.
+
+## usage
 Requires `pg_config` installed.
 
 ```sh
@@ -19,7 +22,7 @@ Make sure the extension is installed `CREATE EXTENSION popcount;`.
 
 option | values | comment
 --- | --- | ---
--s | `popcount`, `popcount32`, `popcount64`, `popcountAsm` | 8bit lookup table, 32bit hamming weight, 64bit hamming weight, Assembly `POPCNT` instruction.
+-s | `popcount`, `popcount32`, `popcount64`, `popcountAsm`, `popcountAsm64`, `popcount256` | 8bit lookup table, 32bit hamming weight, 64bit hamming weight, 32 bit intrinsic function, 64 bit intrinsic function, unrolled assembly instruction.
 -t | *integer* | Number of trials.
 -a | *integer* | Bit alignment length.
 --units | - | Whether time units should be printed or not.
