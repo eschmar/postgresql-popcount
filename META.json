@@ -1,0 +1,49 @@
+{
+    "name": "popcount",
+    "abstract": "Introduces the population count operation popcount() on bit(n) type.",
+    "description": "Provides `popcount`, `popcount32`, `popcount64`, `popcountAsm`, `popcountAsm64` and `popcount256` functions to PostgreSQL.",
+    "version": "1.0.0",
+    "maintainer": "Marcel Eschmann",
+    "license": "MIT",
+    "provides": {
+        "popcount": {
+            "abstract": "Introduces popcount[|32|64|Asm|Asm64|256](bit(n)).",
+            "file": "sql/popcount.sql",
+            "docfile": "readme.md",
+            "version": "1.0.0"
+        }
+    },
+    "prereqs": {
+        "runtime": {
+            "requires": {
+                "PostgreSQL": "10.0.0"
+            },
+            "recommends": {
+                "PostgreSQL": "10.4.0"
+            }
+        }
+    },
+    "release_status": "stable",
+    "resources": {
+        "bugtracker": {
+            "web": "https://github.com/eschmar/postgresql-popcount/issues"
+        },
+        "repository": {
+          "url":  "git@github.com:eschmar/postgresql-popcount.git",
+          "web":  "https://github.com/eschmar/postgresql-popcount",
+          "type": "git"
+        }
+    },
+    "generated_by": "Marcel Eschmann",
+    "meta-spec": {
+        "version": "1.0.0",
+        "url": "http://pgxn.org/meta/spec.txt"
+    },
+    "tags": [
+        "popcnt",
+        "population count",
+        "bit count",
+        "BIT_COUNT",
+        "bitwise"
+     ]
+}
