@@ -1,8 +1,14 @@
-# PostgreSQL popcount function for data type bit(n).
-Provides `popcount`, `popcount32`, `popcount64`, `popcountAsm`, `popcountAsm64` and `popcount256` functions to PostgreSQL.
+# PostgreSQL population count function for data type bit(n).
+Provides `popcount`, `popcount32`, `popcount64`, `popcountAsm`, `popcountAsm64` and `popcount256` functions to PostgreSQL. The extension was elected to provide all algorithms to enable a conscious choice on runtime. Statistical benchmark data suggests that `popcountAsm64` should be chosen in most cases.
 
 ## usage
-Requires `pg_config` installed.
+The extension is [available on PGXN](https://pgxn.org/dist/popcount/).
+
+```sh
+pgxn install popcount
+```
+
+If you want to compile it yourself, `pg_config` is required.
 
 ```sh
 make install
@@ -10,7 +16,9 @@ make installcheck
 ```
 
 ## benchmarks
-Make sure the extension is installed `CREATE EXTENSION popcount;`.
+<img src="https://github.com/eschmar/postgresql-popcount/raw/master/img/graph.png" alt="Benchmarks" style="max-width:100%;">
+
+The test bench was running an Intel(R) Xeon(R) Platinum 8168 CPU @ 2.70GHz and can be reproduced the following way. Make sure the extension is installed beforehand `CREATE EXTENSION popcount;`.
 
 ```sh
 ./helper/generate_db_postgres.sh -a 512
@@ -27,18 +35,3 @@ option | values | comment
 -a | *integer* | Bit alignment length.
 --units | - | Whether time units should be printed or not.
 --color | - | Colorize output.
-
-## results
-<img src="https://github.com/eschmar/postgresql-popcount/raw/master/img/graph.png" alt="Benchmarks" style="max-width:100%;">
-
-## generate lookup table
-```sh
-gcc -o ./helper/lookup_table_generator.o ./helper/lookup_table_generator.c
-./helper/lookup_table_generator.o -n 256
-```
-
-## check for POPCNT hardware support
-```sh
-gcc -o ./helper/popcnt_support.o ./helper/popcnt_support.c
-./helper/popcnt_support.o
-```
