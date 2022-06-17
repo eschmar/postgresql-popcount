@@ -1,3 +1,5 @@
+**Note:** PostgreSQL version 14 introduced their own [`bit_count`](https://www.postgresql.org/docs/14/functions-bitstring.html). You may find [their implementation here](https://github.com/postgres/postgres/blob/master/src/port/pg_bitutils.c) (or [here](https://git.postgresql.org/gitweb/?p=postgresql.git;a=blob;f=src/port/pg_bitutils.c;hb=HEAD)) for comparison. It is therefore recommended to only use this repository for postgres versions <14.
+
 # PostgreSQL population count function for data type bit(n).
 Provides `popcount`, `popcount32`, `popcount64`, `popcountAsm`, `popcountAsm64` and `popcount256` functions to PostgreSQL. The extension was elected to provide all algorithms to enable a conscious choice on runtime. Statistical benchmark data suggests that `popcountAsm64` should be chosen in most cases.
 
