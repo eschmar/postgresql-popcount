@@ -17,26 +17,28 @@ make install
 make installcheck
 ```
 
-## Benchmarks
+## Benchmarks 2019
 <img src="https://github.com/eschmar/postgresql-popcount/raw/master/img/graph.png" alt="Benchmarks" style="max-width:100%;">
 
-The test bench was running an Intel(R) Xeon(R) Platinum 8168 CPU @ 2.70GHz and can be reproduced the following way. Make sure the extension is installed beforehand `CREATE EXTENSION popcount;`.
+The test bench was running an Intel(R) Xeon(R) Platinum 8168 CPU @ 2.70GHz on Ubuntu 18.04 and PostgreSQL 10.3.
+
+## Benchmarks 2023
+> TODO: Add benchmark results graph.
+
+The test bench was running an Intel(R) Xeon(R) Platinum 8358 CPU @ 2.60GHz on Ubuntu 22.04 and PostgreSQL 14.7. It can be reproduced the following way.
 
 ```sh
 ./helper/generate_db_postgres.sh -d 500000 -a "2048 4096 8192"
-./benchmark/postgres.sh [-s popcount -t 10 -a 512 --units --color]
-
-./helper/generate_db_mysql.sh -d <database>
-./benchmark/mysql.sh [-s popcount -t 10 -d <database>]
+./benchmark/postgres.sh -s popcountAsm64 -t 50 -d 500000 -a "2048 4096 8192"
 ```
 
 option | values | comment
 --- | --- | ---
 -s | `popcount`, `popcount32`, `popcount64`, `popcountAsm`, `popcountAsm64`, `popcount256` | 8bit lookup table, 32bit hamming weight, 64bit hamming weight, 32 bit intrinsic function, 64 bit intrinsic function, unrolled assembly instruction.
 -t | *integer* | Number of trials.
--a | *integer* | Bit alignment length.
+-d | *integer* | Number of rows in domain.
+-a | *integer* | Bit alignments to test.
 --units | - | Whether time units should be printed or not.
---color | - | Colorize output.
 
 ## Setup (Ubuntu 22.04 LTS)
 Setup instructions for convenience.
