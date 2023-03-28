@@ -31,12 +31,22 @@ do
     psql -q -c "TRUNCATE TABLE \"$table\";"
 
     hexLength=$(($alignment/8))
+    batchCount=20
 
-    for (( j=0; j<($domain); j++))
+    for (( j=0; j<($domain/20); j++))
     do
-        echo -ne ">>> Adding rows ($j/$domain).\r"
-        randomhex=$(openssl rand -hex $hexLength)
-        psql -q -c "INSERT INTO $table (bit) VALUES (x'$randomhex'::bit($alignment));"
+        echo -ne ">>> Adding rows ($(($j * $batchCount))/$domain).\r"
+
+        sql=''
+        for (( i=1; i<=$batchCount; i++ ))
+        do
+            randomhex=$(openssl rand -hex $hexLength)
+            sql="$sql(x'$randomhex'::bit($alignment))"
+            if [[ $i -ne $batchCount ]]; then sql="$sql," ; fi
+        done
+
+        # insert here
+        psql -q -c "INSERT INTO $table (bit) VALUES $sql;"
     done
 
     echo -ne "\n"

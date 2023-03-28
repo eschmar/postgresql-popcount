@@ -40,8 +40,8 @@ option | values | comment
 -a | *integer* | Bit alignments to test.
 --units | - | Whether time units should be printed or not.
 
-## Setup (Ubuntu 22.04 LTS)
-Setup instructions for convenience.
+## Setup
+Setup instructions on Ubuntu 22.04 LTS for convenience.
 
 ```sh
 # install dependencies
