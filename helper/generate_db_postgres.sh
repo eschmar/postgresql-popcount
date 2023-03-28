@@ -33,7 +33,7 @@ do
     hexLength=$(($alignment/8))
     batchCount=20
 
-    for (( j=0; j<($domain/20); j++))
+    for (( j=0; j<($domain/$batchCount); j++))
     do
         echo -ne ">>> Adding rows ($(($j * $batchCount))/$domain).\r"
 
