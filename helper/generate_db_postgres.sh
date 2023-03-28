@@ -14,7 +14,6 @@ while getopts 'd:a:s:' flag; do
     case "${flag}" in
         d) domain=$OPTARG ;;
         a) alignments=$OPTARG ;;
-        s) samples=$OPTARG ;;
         *) error "Unexpected option ${flag}" ;;
     esac
 done
