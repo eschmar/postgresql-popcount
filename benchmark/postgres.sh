@@ -23,14 +23,14 @@ while getopts 's:t:a:x:uc' flag; do
 done
 
 printf "> Strategy: ${MAGENTA}$strategy${NC}\n"
-printf "> Bit length: ${MAGENTA}$alignment${NC}\n"
+printf "> Bit length: ${MAGENTA}$alignments${NC}\n"
 printf "> Trials: ${MAGENTA}$trials${NC}\n\n"
 
 read -a arr <<< "$alignments"
 
 for alignment in "${arr[@]}"
 do
-    printf "${CYAN}$sample${NC} "
+    printf "${CYAN}$alignment${NC} "
 
     table="${base}_${alignment}_$(printf %07d $domain)"
     query="SELECT sum(count) FROM (SELECT $strategy(bit) as count FROM $table WHERE True) as bits;"
