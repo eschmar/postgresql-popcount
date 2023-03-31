@@ -7,12 +7,14 @@ NC='\033[0m'
 base="bit_count"
 database="bit_count"
 
+batchSize=20
 domain=500000
 alignments="2048 4096 8192 15040 16384 32768 65536 131072"
 
 while getopts 'd:a:s:' flag; do
     case "${flag}" in
         d) domain=$OPTARG ;;
+        b) batchSize=$OPTARG ;;
         a) alignments=$OPTARG ;;
         *) error "Unexpected option ${flag}" ;;
     esac
@@ -31,18 +33,17 @@ do
     psql -q -c "TRUNCATE TABLE \"$table\";"
 
     hexLength=$(($alignment/8))
-    batchCount=20
 
-    for (( j=0; j<($domain/$batchCount); j++))
+    for (( j=0; j<($domain/$batchSize); j++))
     do
-        echo -ne ">>> Adding rows ($(($j * $batchCount))/$domain).\r"
+        echo -ne ">>> Adding rows ($(($j * $batchSize))/$domain).\r"
 
         sql=''
-        for (( i=1; i<=$batchCount; i++ ))
+        for (( i=1; i<=$batchSize; i++ ))
         do
             randomhex=$(openssl rand -hex $hexLength)
             sql="$sql(x'$randomhex'::bit($alignment))"
-            if [[ $i -ne $batchCount ]]; then sql="$sql," ; fi
+            if [[ $i -ne $batchSize ]]; then sql="$sql," ; fi
         done
 
         # insert here
