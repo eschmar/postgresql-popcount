@@ -23,6 +23,8 @@ make installcheck
 The test bench was running an Intel(R) Xeon(R) Platinum 8168 CPU @ 2.70GHz on Ubuntu 18.04 and PostgreSQL 10.3.
 
 ## Benchmarks 2023
+More information in [this blog post](https://eschmann.dev/2023/04/revisiting-popcount-on-postgres-14).
+
 <img src="https://github.com/eschmar/postgresql-popcount/raw/master/img/graph-2023.png" alt="Benchmarks 2023" style="max-width:100%;">
 
 The test bench was running an Intel(R) Xeon(R) Platinum 8358 CPU @ 2.60GHz on Ubuntu 22.04 and PostgreSQL 14.7. It can be reproduced the following way.
