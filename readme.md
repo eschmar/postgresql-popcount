@@ -1,4 +1,4 @@
-**Note:** PostgreSQL version 14 introduced their own [`bit_count`](https://www.postgresql.org/docs/14/functions-bitstring.html). You may find [their implementation here](https://github.com/postgres/postgres/blob/master/src/port/pg_bitutils.c) (or [here](https://git.postgresql.org/gitweb/?p=postgresql.git;a=blob;f=src/port/pg_bitutils.c;hb=HEAD)) for comparison. It is therefore recommended to only use this repository for postgres versions <14.
+**Note:** PostgreSQL version 14 introduced their own [`bit_count`](https://www.postgresql.org/docs/14/functions-bitstring.html). You may find [their implementation here](https://github.com/postgres/postgres/blob/master/src/port/pg_bitutils.c) (or [here](https://git.postgresql.org/gitweb/?p=postgresql.git;a=blob;f=src/port/pg_bitutils.c;hb=HEAD)) for comparison. It is therefore recommended to only use this repository for postgres versions <14. More information in [this blog post](https://eschmann.dev/2023/04/revisiting-popcount-on-postgres-14).
 
 # PostgreSQL population count function for data type bit(n).
 Provides `popcount`, `popcount32`, `popcount64`, `popcountAsm`, `popcountAsm64` and `popcount256` functions to PostgreSQL. The extension was elected to provide all algorithms to enable a conscious choice on runtime. Statistical benchmark data suggests that `popcountAsm64` should be chosen in most cases.
@@ -17,8 +17,8 @@ make install
 make installcheck
 ```
 
-## Benchmarks 2019
-<img src="https://github.com/eschmar/postgresql-popcount/raw/master/img/graph.png" alt="Benchmarks 2019" style="max-width:100%;">
+## Benchmarks 2018
+<img src="https://github.com/eschmar/postgresql-popcount/raw/master/img/graph.png" alt="Benchmarks 2018" style="max-width:100%;">
 
 The test bench was running an Intel(R) Xeon(R) Platinum 8168 CPU @ 2.70GHz on Ubuntu 18.04 and PostgreSQL 10.3.
 
